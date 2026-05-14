@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>In-House vs. Solo: Trainer Economics Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --surface-2: #efebe3;
+    --ink: #1a1a1a;
+    --ink-2: #4a4a4a;
+    --ink-3: #7a7a7a;
+    --line: #d8d2c5;
+    --line-soft: #e6e1d5;
+    --accent: #8b3a1e;
+    --accent-soft: #c46302;
+    --good: #015b54;
+    --bad: #7a0000;
+    --highlight: #fef9e7;
+    --warning-bg: #faf3e0;
+    --warning-ink: #5c4a1a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+  header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.1;
+    margin: 0 0 14px;
+    letter-spacing: -0.02em;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .subtitle {
+    font-size: 15px;
+    color: var(--ink-2);
+    max-width: 620px;
+    line-height: 1.55;
+  }
+
+  h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 22px;
+    margin: 36px 0 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .callout {
+    background: var(--warning-bg);
+    border-left: 3px solid var(--accent-soft);
+    padding: 14px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--warning-ink);
+    margin-bottom: 24px;
+    border-radius: 2px;
+  }
+  .callout strong { font-weight: 600; color: var(--ink); }
+
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+
+  .group {
+    margin-bottom: 22px;
+  }
+  .group:last-child { margin-bottom: 0; }
+
+  .group-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 12px;
+  }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .input-row label {
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .input-row label .hint {
+    color: var(--ink-3);
+    font-size: 12px;
+    margin-left: 6px;
+  }
+  .input-row .control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .input-row .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 56px;
+    text-align: right;
+    color: var(--ink);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    max-width: 260px;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    background: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px;
+    background: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+  input[type="number"] {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+    width: 80px;
+    text-align: right;
+    color: var(--ink);
+  }
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--ink);
+  }
+
+  .preset-buttons {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .preset-buttons button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .preset-buttons button:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .comp-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 22px 24px;
+  }
+  .comp-card .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .comp-card .descriptor {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .comp-card .figure {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .comp-card .note {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.5;
+  }
+  .delta-positive { color: var(--good); font-weight: 500; }
+  .delta-negative { color: var(--bad); font-weight: 500; }
+
+  .pl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pl-table tr td:first-child {
+    color: var(--ink-2);
+    padding: 5px 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .pl-table tr td:last-child {
+    text-align: right;
+    color: var(--ink);
+  }
+  .pl-table tr.section-break td {
+    border-top: 1px solid var(--line-soft);
+    padding-top: 8px;
+  }
+  .pl-table tr.total td {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .pl-table tr.total td:first-child { font-family: 'Inter', sans-serif; }
+  .pl-table tr.danger td:last-child { color: var(--bad); }
+  .pl-footnote {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .insight-box {
+    background: var(--surface-2);
+    border-radius: 4px;
+    padding: 18px 22px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-top: 8px;
+  }
+  .insight-box .title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .insight-box em { font-style: italic; color: var(--ink-2); }
+  .insight-box strong { font-weight: 600; }
+
+  .reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .reference-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 8px 6px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .reference-table th:not(:first-child),
+  .reference-table td:not(:first-child) {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .reference-table td {
+    padding: 7px 8px 7px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .reference-table tr:last-child td {
+    border-bottom: none;
+    font-weight: 600;
+    padding-top: 10px;
+  }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="eyebrow">A decision tool</div>
+  <h1>In-house vs. <em>going solo</em></h1>
+  <p class="subtitle">An interactive model for the full economics a trainer faces when considering leaving a studio for a personal-training sublease. Designed to surface what the headline hourly rate doesn't.</p>
+</header>
+
+<div class="callout">
+  <strong>The single biggest insight this tool exposes:</strong> at most in-house studios, a trainer's income isn't 19 personal-training sessions a week. It's a <em>product mix</em> the studio designed: group classes that pay like a senior trainer for one hour of work, partner sessions that double hourly throughput, and solo PT on top. A personal-training sublease gives you a room. It doesn't give you the product mix.
+</div>
+
+<h2>The reference baseline</h2>
+<div class="section">
+  <div class="section-label">A typical full-book trainer at an established studio</div>
+  <table class="reference-table">
+    <thead>
+      <tr><th>Category</th><th>/ week</th><th>Pay/unit</th><th>Annual</th><th>% mix</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Group classes</td><td>6</td><td>$65</td><td>$20,500</td><td>~38%</td></tr>
+      <tr><td>Solo PT</td><td>6</td><td>$45</td><td>$14,500</td><td>~26%</td></tr>
+      <tr><td>Partner PT (2 clients per slot)</td><td>5 slots</td><td>$30/client</td><td>$16,300</td><td>~29%</td></tr>
+      <tr><td>Triple PT (3 clients per slot)</td><td>1 slot</td><td>$26/client</td><td>$2,700</td><td>~5%</td></tr>
+      <tr><td>Annual gross (W-2)</td><td>~18 slots</td><td></td><td>$55,000</td><td>100%</td></tr>
+    </tbody>
+  </table>
+  <p class="pl-footnote">Roughly 18 calendar slots per week, not 25 "sessions." Partner and triple sessions stack multiple clients into one hour. The studio bills each client; the trainer is paid per client. Numbers are illustrative.</p>
+</div>
+
+<h2>Build a solo scenario</h2>
+
+<div class="section">
+  <div class="section-label">Space</div>
+  <div class="input-row">
+    <label>Monthly sublease</label>
+    <div class="control">
+      <input type="range" min="0" max="2500" step="50" value="1000" id="sublease">
+      <span class="value" id="sublease-out">$1,000</span>
+    </div>
+  </div>
+  <div class="preset-buttons" id="sublease-buttons">
+    <button data-val="500">$500</button>
+    <button data-val="1000">$1,000</button>
+    <button data-val="1500">$1,500</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="group">
+    <div class="group-title">Solo personal training</div>
+    <div class="input-row">
+      <label>Sessions per week <span class="hint">(in-house baseline: 6)</span></label>
+      <div class="control">
+        <input type="range" min="0" max="30" step="1" value="10" id="solosess">
+        <span class="value" id="solosess-out">10</span>
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Price per session</label>
+      <div class="control">
+        <input type="number" id="soloprice" value="100">
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Partner personal training <span style="font-weight:400;font-size:13px;color:var(--ink-3);">(2 clients per slot)</span></div>
+    <div class="input-row">
+      <label>Partner slots per week <span class="hint">(in-house baseline: 5)</span></label>
+      <div class="control">
+        <input type="range" min="0" max="15" step="1" value="3" id="partslots">
+        <span class="value" id="partslots-out">3</span>
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Price per person</label>
+      <div class="control">
+        <input type="number" id="partprice" value="60">
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Group classes <span style="font-weight:400;font-size:13px;color:var(--ink-3);">— typically not allowed in a PT sublease</span></div>
+    <div class="input-row">
+      <label>Classes per week <span class="hint">(in-house baseline: 6, likely lost)</span></label>
+      <div class="control">
+        <input type="range" min="0" max="10" step="1" value="0" id="grpclasses">
+        <span class="value" id="grpclasses-out">0</span>
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Average attendees</label>
+      <div class="control">
+        <input type="number" id="grpsize" value="8">
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Price per attendee</label>
+      <div class="control">
+        <input type="number" id="grpprice" value="25">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Costs &amp; leakage</div>
+  <div class="grid-2">
+    <div class="input-row">
+      <label>Late-cancel revenue lost <span class="hint">(% of gross)</span></label>
+      <div class="control"><input type="number" id="latecancel" value="5" step="1"></div>
+    </div>
+    <div class="input-row">
+      <label>Credit card fees <span class="hint">(% of collected)</span></label>
+      <div class="control"><input type="number" id="ccfee" value="3.8" step="0.1"></div>
+    </div>
+    <div class="input-row">
+      <label>Self-employment tax <span class="hint">(% of net)</span></label>
+      <div class="control"><input type="number" id="setax" value="15.3" step="0.1"></div>
+    </div>
+    <div class="input-row">
+      <label>Scheduling software / mo</label>
+      <div class="control"><input type="number" id="software" value="35"></div>
+    </div>
+    <div class="input-row">
+      <label>Liability insurance / yr</label>
+      <div class="control"><input type="number" id="insurance" value="300"></div>
+    </div>
+    <div class="input-row">
+      <label>Equipment / yr</label>
+      <div class="control"><input type="number" id="equipment" value="1200"></div>
+    </div>
+  </div>
+  <p class="pl-footnote">Late cancels at an established studio are typically charged to the client and paid to the coach. Solo, that revenue evaporates. Self-employment tax (Social Security + Medicare) is owed in full by the self-employed — the employer paid half of it as a W-2 worker.</p>
+</div>
+
+<h2>The comparison</h2>
+
+<div class="grid-2">
+  <div class="comp-card">
+    <div class="label">In-house (W-2)</div>
+    <div class="descriptor">Annual gross</div>
+    <div class="figure">$55,000</div>
+    <p class="note">Employer pays half FICA. No sublease, software, insurance, or equipment cost. Late cancels paid. Programming, scheduling, marketing, intake, retention all provided. Roughly 18 calendar slots / week.</p>
+  </div>
+  <div class="comp-card">
+    <div class="label">Solo (after SE tax)</div>
+    <div class="descriptor">Net take-home</div>
+    <div class="figure" id="solo-net">—</div>
+    <p class="note" id="solo-delta">—</p>
+  </div>
+</div>
+
+<h2>Solo P&amp;L</h2>
+<div class="section">
+  <table class="pl-table">
+    <tbody>
+      <tr><td>Solo PT revenue</td><td id="r-solo">—</td></tr>
+      <tr><td>Partner PT revenue</td><td id="r-part">—</td></tr>
+      <tr><td>Group class revenue</td><td id="r-grp">—</td></tr>
+      <tr class="section-break"><td>Gross billable</td><td id="r-gross">—</td></tr>
+      <tr><td>Less: late-cancel revenue lost</td><td id="r-lc">—</td></tr>
+      <tr><td>Less: credit card fees</td><td id="r-cc">—</td></tr>
+      <tr><td>Less: sublease (annual)</td><td id="r-rent">—</td></tr>
+      <tr><td>Less: software / insurance / equipment</td><td id="r-fixed">—</td></tr>
+      <tr class="section-break"><td>Net business income</td><td id="r-nbi">—</td></tr>
+      <tr class="danger"><td>Less: self-employment tax</td><td id="r-se">—</td></tr>
+      <tr class="section-break total"><td>Take-home (before income tax)</td><td id="r-net">—</td></tr>
+    </tbody>
+  </table>
+  <p class="pl-footnote">Calendar slots per week in this scenario: <span id="r-slots">—</span> (vs. ~18 at the studio). State and federal income tax fall <em>after</em> take-home. This model does not yet account for the value of employer-provided health insurance, retirement contributions, or paid time off.</p>
+</div>
+
+<div class="insight-box">
+  <div class="title">The unpaid hours nobody quotes you</div>
+  Going solo doesn't just mean taking back the programming and scheduling work the studio currently does. It means an entirely new category of work the trainer has never done at scale: <em>marketing, lead generation, sales calls, intake and onboarding, contracts, bookkeeping, quarterly estimated tax filings, insurance and license renewals, equipment maintenance, social content, retention and win-back campaigns, no-show chasing,</em> and being the only person who handles a sick day or a broken cable machine. Realistic estimate: <strong>10–15 hours per week on top of training itself</strong>. If group classes are part of the plan, add 3–5 more hours for programming them.
+</div>
+
+<div class="insight-box" style="margin-top:14px;">
+  <div class="title">The structural problem</div>
+  <span id="structural-text">—</span>
+</div>
+
+<footer>
+  A standalone tool. No data leaves this page. Inputs reset on refresh. Built to support an honest conversation, not to produce a forecast.
+</footer>
+
+</div>
+
+<script>
+(function() {
+  const $ = id => document.getElementById(id);
+  const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+  const fmtSigned = n => (n >= 0 ? '+' : '−') + '$' + Math.abs(Math.round(n)).toLocaleString('en-US');
+
+  const BASELINE_GROSS = 55000;
+
+  function calc() {
+    const sublease = +$('sublease').value;
+    const soloSess = +$('solosess').value;
+    const soloPrice = +$('soloprice').value || 0;
+    const partSlots = +$('partslots').value;
+    const partPrice = +$('partprice').value || 0;
+    const grpClasses = +$('grpclasses').value;
+    const grpSize = +$('grpsize').value || 0;
+    const grpPrice = +$('grpprice').value || 0;
+    const lcPct = (+$('latecancel').value || 0) / 100;
+    const ccPct = (+$('ccfee').value || 0) / 100;
+    const sePct = (+$('setax').value || 0) / 100;
+    const software = +$('software').value || 0;
+    const insurance = +$('insurance').value || 0;
+    const equipment = +$('equipment').value || 0;
+
+    $('sublease-out').textContent = fmt(sublease);
+    $('solosess-out').textContent = soloSess;
+    $('partslots-out').textContent = partSlots;
+    $('grpclasses-out').textContent = grpClasses;
+
+    const soloRev = soloSess * soloPrice * 52;
+    const partRev = partSlots * 2 * partPrice * 52;
+    const grpRev = grpClasses * grpSize * grpPrice * 52;
+    const grossBillable = soloRev + partRev + grpRev;
+
+    const lcLost = grossBillable * lcPct;
+    const collected = grossBillable - lcLost;
+    const ccFees = collected * ccPct;
+    const rent = sublease * 12;
+    const fixed = software * 12 + insurance + equipment;
+    const nbi = collected - ccFees - rent - fixed;
+    const seTax = Math.max(0, nbi) * sePct;
+    const takeHome = nbi - seTax;
+
+    const slots = soloSess + partSlots + grpClasses;
+
+    $('r-solo').textContent = fmt(soloRev);
+    $('r-part').textContent = fmt(partRev);
+    $('r-grp').textContent = fmt(grpRev);
+    $('r-gross').textContent = fmt(grossBillable);
+    $('r-lc').textContent = '(' + fmt(lcLost) + ')';
+    $('r-cc').textContent = '(' + fmt(ccFees) + ')';
+    $('r-rent').textContent = '(' + fmt(rent) + ')';
+    $('r-fixed').textContent = '(' + fmt(fixed) + ')';
+    $('r-nbi').textContent = fmt(nbi);
+    $('r-se').textContent = '(' + fmt(seTax) + ')';
+    $('r-net').textContent = fmt(takeHome);
+    $('r-slots').textContent = slots;
+
+    $('solo-net').textContent = fmt(takeHome);
+    const delta = takeHome - BASELINE_GROSS;
+    const cls = delta >= 0 ? 'delta-positive' : 'delta-negative';
+    $('solo-delta').innerHTML =
+      '<span class="' + cls + '">' + fmtSigned(delta) + ' vs. in-house gross</span><br>' +
+      '<span style="color:var(--ink-3);">before income tax, health insurance, retirement, paid time off</span>';
+
+    const structEl = $('structural-text');
+    if (grpClasses === 0 && takeHome < BASELINE_GROSS) {
+      const gap = BASELINE_GROSS - takeHome;
+      const extraSolo = Math.ceil(gap / (soloPrice * 52 * (1 - lcPct) * (1 - ccPct) * (1 - sePct)));
+      structEl.innerHTML = 'Without group classes, the trainer loses ~$20K per year of their highest-leverage income — one hour of work paying as much as solo PT, but to one trainer for a roomful of clients. To close the <strong>' + fmt(gap) + '</strong> gap at $' + soloPrice + '/solo session would require <strong>' + extraSolo + ' more solo sessions per week</strong>, found and retained without the studio\'s marketing funnel, brand, intake process, or community.';
+    } else if (grpClasses === 0 && takeHome >= BASELINE_GROSS) {
+      structEl.innerHTML = 'These numbers beat in-house on paper — but at the cost of ' + slots + ' calendar slots per week vs. ~18 currently. The question becomes whether ' + slots + ' high-paying solo clients can be found and retained without the studio\'s brand, intake, or marketing.';
+    } else {
+      const grpAnnual = grpClasses * grpSize * grpPrice * 52;
+      structEl.innerHTML = 'This scenario assumes <strong>' + grpClasses + ' group classes per week solo</strong>, generating $' + Math.round(grpAnnual).toLocaleString() + '/year. Two hard questions: (1) Does the sublease space actually <em>allow</em> group classes? Most PT subleases don\'t. (2) Can a solo trainer fill them without the studio\'s brand, programming, and existing community? Group classes that average 9 attendees per session are usually the result of years of brand-building, not the trainer\'s name alone.';
+    }
+  }
+
+  ['sublease','solosess','soloprice','partslots','partprice','grpclasses','grpsize','grpprice','latecancel','ccfee','setax','software','insurance','equipment'].forEach(id => {
+    $(id).addEventListener('input', calc);
+  });
+
+  document.querySelectorAll('#sublease-buttons button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('sublease').value = btn.dataset.val;
+      calc();
+    });
+  });
+
+  calc();
+})();
+</script>
+</body>
+</html>
