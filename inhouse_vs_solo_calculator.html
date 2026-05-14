@@ -309,6 +309,33 @@
   }
   .insight-box em { font-style: italic; color: var(--ink-2); }
   .insight-box strong { font-weight: 600; }
+  .unpaid-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+  @media (max-width: 640px) { .unpaid-list { grid-template-columns: 1fr; } }
+  .unpaid-list li {
+    font-size: 13px;
+    line-height: 1.5;
+    padding-left: 14px;
+    position: relative;
+    color: var(--ink-2);
+  }
+  .unpaid-list li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--ink-3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .unpaid-list li strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
 
   .reference-table {
     width: 100%;
@@ -413,7 +440,7 @@
     <div class="input-row">
       <label>Price per session</label>
       <div class="control">
-        <input type="number" id="soloprice" value="90">
+        <input type="number" id="soloprice" value="85">
       </div>
     </div>
   </div>
@@ -430,7 +457,7 @@
     <div class="input-row">
       <label>Price per person</label>
       <div class="control">
-        <input type="number" id="partprice" value="50">
+        <input type="number" id="partprice" value="45">
       </div>
     </div>
   </div>
@@ -486,8 +513,12 @@
       <label>Equipment / yr</label>
       <div class="control"><input type="number" id="equipment" value="1200"></div>
     </div>
+    <div class="input-row">
+      <label>LLC + tax prep / yr <span class="hint">(annual report + CPA)</span></label>
+      <div class="control"><input type="number" id="filings" value="500"></div>
+    </div>
   </div>
-  <p class="pl-footnote">Late cancels at an established studio are typically charged to the client and paid to the coach. Solo, that revenue evaporates. Self-employment tax (Social Security + Medicare) is owed in full by the self-employed — the employer paid half of it as a W-2 worker.</p>
+  <p class="pl-footnote">Late cancels at an established studio are typically charged to the client and paid to the coach. Solo, that revenue evaporates. Self-employment tax (Social Security + Medicare) is owed in full by the self-employed — the employer paid half of it as a W-2 worker. LLC + tax prep covers the annual state LLC filing (Maine: $85) plus CPA-prepared Schedule C / Schedule SE returns; DIY via TurboTax Self-Employed runs ~$130, a real CPA $400–800.</p>
 </div>
 
 <h2>The comparison</h2>
@@ -518,7 +549,7 @@
       <tr><td>Less: late-cancel revenue lost</td><td id="r-lc">—</td></tr>
       <tr><td>Less: credit card fees</td><td id="r-cc">—</td></tr>
       <tr><td>Less: sublease (annual)</td><td id="r-rent">—</td></tr>
-      <tr><td>Less: software / insurance / equipment</td><td id="r-fixed">—</td></tr>
+      <tr><td>Less: software / insurance / equipment / filings</td><td id="r-fixed">—</td></tr>
       <tr class="section-break"><td>Net business income</td><td id="r-nbi">—</td></tr>
       <tr class="danger"><td>Less: self-employment tax</td><td id="r-se">—</td></tr>
       <tr class="section-break total"><td>Take-home (before income tax)</td><td id="r-net">—</td></tr>
@@ -529,7 +560,23 @@
 
 <div class="insight-box">
   <div class="title">The unpaid hours nobody quotes you</div>
-  Going solo doesn't just mean taking back the programming and scheduling work the studio currently does. It means an entirely new category of work the trainer has never done at scale: <em>marketing, lead generation, sales calls, intake and onboarding, contracts, bookkeeping, quarterly estimated tax filings, insurance and license renewals, equipment maintenance, social content, retention and win-back campaigns, no-show chasing,</em> and being the only person who handles a sick day or a broken cable machine. Realistic estimate: <strong>10–15 hours per week on top of training itself</strong>. If group classes are part of the plan, add 3–5 more hours for programming them.
+  <p style="margin:0 0 10px;">Going solo doesn't just mean taking back the programming and scheduling work the studio currently does. It means an entirely new category of work the trainer has never done at scale:</p>
+  <ul class="unpaid-list">
+    <li><strong>Marketing &amp; lead generation</strong> — ads, social, referrals, content, the funnel that fills the schedule</li>
+    <li><strong>Sales &amp; consultations</strong> — pricing conversations, closing prospects, package design</li>
+    <li><strong>Intake &amp; onboarding</strong> — health questionnaires, waivers, goal-setting, first-session prep</li>
+    <li><strong>Contracts &amp; agreements</strong> — client terms, cancellation policies, sublease compliance</li>
+    <li><strong>Bookkeeping</strong> — invoicing, expense tracking, mileage logs, receipt management</li>
+    <li><strong>Quarterly estimated tax filings</strong> — four times a year, federal and state</li>
+    <li><strong>Annual tax return &amp; LLC filing</strong> — Schedule C, Schedule SE, Maine annual report</li>
+    <li><strong>Insurance &amp; credential renewals</strong> — liability policy, CPR, certifications</li>
+    <li><strong>Equipment maintenance &amp; replacement</strong> — when something breaks, you fix it or buy it</li>
+    <li><strong>Social content &amp; community management</strong> — staying visible to prospects and retaining clients</li>
+    <li><strong>Retention &amp; win-back</strong> — chasing lapsed clients, birthday outreach, milestone touches</li>
+    <li><strong>No-show chasing &amp; rescheduling</strong> — the work studio admin does for free</li>
+    <li><strong>Sick days &amp; emergencies</strong> — there is no backup coach; cancellations are lost revenue</li>
+  </ul>
+  <p style="margin:10px 0 0;">Realistic estimate: <strong>10–15 hours per week on top of training itself</strong>. If group classes are part of the plan, add 3–5 more hours for programming them.</p>
 </div>
 
 <div class="insight-box" style="margin-top:14px;">
@@ -566,6 +613,7 @@
     const software = +$('software').value || 0;
     const insurance = +$('insurance').value || 0;
     const equipment = +$('equipment').value || 0;
+    const filings = +$('filings').value || 0;
 
     $('sublease-out').textContent = fmt(sublease);
     $('solosess-out').textContent = soloSess;
@@ -581,7 +629,7 @@
     const collected = grossBillable - lcLost;
     const ccFees = collected * ccPct;
     const rent = sublease * 12;
-    const fixed = software * 12 + insurance + equipment;
+    const fixed = software * 12 + insurance + equipment + filings;
     const nbi = collected - ccFees - rent - fixed;
     const seTax = Math.max(0, nbi) * sePct;
     const takeHome = nbi - seTax;
@@ -621,7 +669,7 @@
     }
   }
 
-  ['sublease','solosess','soloprice','partslots','partprice','grpclasses','grpsize','grpprice','latecancel','ccfee','setax','software','insurance','equipment'].forEach(id => {
+  ['sublease','solosess','soloprice','partslots','partprice','grpclasses','grpsize','grpprice','latecancel','ccfee','setax','software','insurance','equipment','filings'].forEach(id => {
     $(id).addEventListener('input', calc);
   });
 
