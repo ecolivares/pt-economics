@@ -69,7 +69,6 @@
   .subtitle {
     font-size: 15px;
     color: var(--ink-2);
-    max-width: 620px;
     line-height: 1.55;
   }
 
@@ -291,6 +290,37 @@
     margin-top: 10px;
     line-height: 1.5;
   }
+  .pl-sources {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-soft);
+    line-height: 1.7;
+  }
+  .pl-sources strong {
+    color: var(--ink-2);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .pl-sources a {
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .pl-sources a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .pl-sources b {
+    color: var(--ink);
+    font-weight: 600;
+  }
 
   .insight-box {
     background: var(--surface-2);
@@ -408,11 +438,10 @@
 <header>
   <div class="eyebrow">A decision tool</div>
   <h1>In-house vs. <em>going solo</em></h1>
-  <p class="subtitle">An interactive model for the full economics a trainer faces when considering leaving a studio for a personal-training sublease. Designed to surface what the headline hourly rate doesn't.</p>
 </header>
 
 <div class="callout">
-  <strong>The single biggest insight this tool exposes:</strong> at most in-house studios, a trainer's income isn't 19 personal-training sessions a week. It's a <em>product mix</em> the studio designed: group classes that pay like a senior trainer for one hour of work, partner sessions that double hourly throughput, and solo PT on top. A personal-training sublease gives you a room. It doesn't give you the product mix.
+  This tool compares two paths a personal trainer can take: continuing as a W-2 employee at an established studio, or going solo with a personal-training sublease. The calculator accounts for the full economics of each side — session revenue across solo and partner formats, sublease, scheduling software, liability insurance, equipment, credit card processing, late cancels, and self-employment tax. Adjust the inputs to see how the numbers move.
 </div>
 
 <h2>The reference baseline</h2>
@@ -445,9 +474,12 @@
     </div>
   </div>
   <div class="preset-buttons" id="sublease-buttons">
+    <button data-val="0">$0</button>
     <button data-val="500">$500</button>
     <button data-val="1000">$1,000</button>
     <button data-val="1500">$1,500</button>
+    <button data-val="2000">$2,000</button>
+    <button data-val="2500">$2,500</button>
   </div>
 </div>
 
@@ -485,29 +517,6 @@
       </div>
     </div>
   </div>
-
-  <div class="group">
-    <div class="group-title">Group classes <span style="font-weight:400;font-size:13px;color:var(--ink-3);">— typically not allowed in a PT sublease</span></div>
-    <div class="input-row">
-      <label>Classes per week <span class="hint">(in-house baseline: 6, likely lost)</span></label>
-      <div class="control">
-        <input type="range" min="0" max="10" step="1" value="0" id="grpclasses">
-        <span class="value" id="grpclasses-out">0</span>
-      </div>
-    </div>
-    <div class="input-row">
-      <label>Average attendees</label>
-      <div class="control">
-        <input type="number" id="grpsize" value="8">
-      </div>
-    </div>
-    <div class="input-row">
-      <label>Price per attendee</label>
-      <div class="control">
-        <input type="number" id="grpprice" value="25">
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="section">
@@ -519,7 +528,7 @@
     </div>
     <div class="input-row">
       <label>Credit card fees <span class="hint">(% of collected)</span></label>
-      <div class="control"><input type="number" id="ccfee" value="3.8" step="0.1"></div>
+      <div class="control"><input type="number" id="ccfee" value="3.3" step="0.1"></div>
     </div>
     <div class="input-row">
       <label>Self-employment tax <span class="hint">(% of net)</span></label>
@@ -543,6 +552,16 @@
     </div>
   </div>
   <p class="pl-footnote">Late cancels at an established studio are typically charged to the client and paid to the coach. Solo, that revenue evaporates. Self-employment tax (Social Security + Medicare) is owed in full by the self-employed — the employer paid half of it as a W-2 worker. LLC + tax prep covers the annual state LLC filing (Maine: $85) plus CPA-prepared Schedule C / Schedule SE returns; DIY via TurboTax Self-Employed runs ~$130, a real CPA $400–800.</p>
+  <p class="pl-sources">
+    <strong>Sources for defaults:</strong>
+    <b>Late-cancel rate (5%)</b> — industry estimate, varies by clientele.
+    <b>Credit card fees (3.3%)</b> — blended rate; <a href="https://stripe.com/pricing" target="_blank" rel="noopener">Stripe</a> is 2.9% + 30¢ online, 3.4% + 30¢ manually keyed; <a href="https://squareup.com/us/en/pricing" target="_blank" rel="noopener">Square</a> is 2.6% + 10¢ in-person, 3.5% + 15¢ keyed.
+    <b>Self-employment tax (15.3%)</b> — <a href="https://www.irs.gov/businesses/small-businesses-self-employed/self-employment-tax-social-security-and-medicare-taxes" target="_blank" rel="noopener">IRS</a>: 12.4% Social Security + 2.9% Medicare.
+    <b>Scheduling software ($35/mo)</b> — typical for <a href="https://www.mindbodyonline.com/business/pricing" target="_blank" rel="noopener">Mindbody</a>, <a href="https://www.acuityscheduling.com/pricing" target="_blank" rel="noopener">Acuity</a>, <a href="https://truecoach.co/pricing" target="_blank" rel="noopener">TrueCoach</a> entry tiers.
+    <b>Liability insurance ($300/yr)</b> — typical range for solo PT through <a href="https://www.nasm.org/insurance" target="_blank" rel="noopener">NASM</a>, <a href="https://www.idea.health/insurance" target="_blank" rel="noopener">IDEA</a>, or <a href="https://www.theinsuranceexchange.com/" target="_blank" rel="noopener">Insurance Exchange</a>.
+    <b>Equipment ($1,200/yr)</b> — placeholder for ongoing replacement; varies widely.
+    <b>LLC + tax prep ($500/yr)</b> — <a href="https://www.maine.gov/sos/cec/corp/" target="_blank" rel="noopener">Maine Secretary of State</a>: $85 LLC annual report; remainder for CPA Schedule C/SE prep ($400–800 typical) or TurboTax Self-Employed (~$130).
+  </p>
 </div>
 
 <h2>The comparison</h2>
@@ -568,7 +587,6 @@
     <tbody>
       <tr><td>Solo PT revenue</td><td id="r-solo">—</td></tr>
       <tr><td>Partner PT revenue</td><td id="r-part">—</td></tr>
-      <tr><td>Group class revenue</td><td id="r-grp">—</td></tr>
       <tr class="section-break"><td>Gross billable</td><td id="r-gross">—</td></tr>
       <tr><td>Less: late-cancel revenue lost</td><td id="r-lc">—</td></tr>
       <tr><td>Less: credit card fees</td><td id="r-cc">—</td></tr>
@@ -633,9 +651,6 @@
     const soloPrice = +$('soloprice').value || 0;
     const partSlots = +$('partslots').value;
     const partPrice = +$('partprice').value || 0;
-    const grpClasses = +$('grpclasses').value;
-    const grpSize = +$('grpsize').value || 0;
-    const grpPrice = +$('grpprice').value || 0;
     const lcPct = (+$('latecancel').value || 0) / 100;
     const ccPct = (+$('ccfee').value || 0) / 100;
     const sePct = (+$('setax').value || 0) / 100;
@@ -647,12 +662,10 @@
     $('sublease-out').textContent = fmt(sublease);
     $('solosess-out').textContent = soloSess;
     $('partslots-out').textContent = partSlots;
-    $('grpclasses-out').textContent = grpClasses;
 
     const soloRev = soloSess * soloPrice * 52;
     const partRev = partSlots * 2 * partPrice * 52;
-    const grpRev = grpClasses * grpSize * grpPrice * 52;
-    const grossBillable = soloRev + partRev + grpRev;
+    const grossBillable = soloRev + partRev;
 
     const lcLost = grossBillable * lcPct;
     const collected = grossBillable - lcLost;
@@ -663,11 +676,10 @@
     const seTax = Math.max(0, nbi) * sePct;
     const takeHome = nbi - seTax;
 
-    const slots = soloSess + partSlots + grpClasses;
+    const slots = soloSess + partSlots;
 
     $('r-solo').textContent = fmt(soloRev);
     $('r-part').textContent = fmt(partRev);
-    $('r-grp').textContent = fmt(grpRev);
     $('r-gross').textContent = fmt(grossBillable);
     $('r-lc').textContent = '(' + fmt(lcLost) + ')';
     $('r-cc').textContent = '(' + fmt(ccFees) + ')';
@@ -686,7 +698,7 @@
       '<span style="color:var(--ink-3);">before income tax, health insurance, retirement, paid time off</span>';
   }
 
-  ['sublease','solosess','soloprice','partslots','partprice','grpclasses','grpsize','grpprice','latecancel','ccfee','setax','software','insurance','equipment','filings'].forEach(id => {
+  ['sublease','solosess','soloprice','partslots','partprice','latecancel','ccfee','setax','software','insurance','equipment','filings'].forEach(id => {
     $(id).addEventListener('input', calc);
   });
 
